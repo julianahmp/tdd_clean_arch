@@ -10,21 +10,19 @@ class GetConcreteNumberTrivia implements UseCase<NumberTrivia, Params> {
   //O UseCase deve implementar um UseCase genérico com a função call.
   final NumberTriviaRepository repository;
 
-  GetConcreteNumberTrivia(this.repository);
+  GetConcreteNumberTrivia({required this.repository});
 
   @override
   Future<Either<Failure, NumberTrivia>> call(params) async {
     return await repository.getConcreteNumberTrivia(params.number);
-    //Chama o repository da Domain para passar a função.
+    //Chama o repository da Domain para passar o método.
   }
 }
 
 class Params extends Equatable {
   final int number;
-  const Params ({required this.number});
+  const Params({required this.number});
 
   @override
-  // ignore: todo
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [number];
 }

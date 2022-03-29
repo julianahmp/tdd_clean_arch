@@ -8,7 +8,5 @@ abstract class UseCase<Type, Params> {
 
 class NoParams extends Equatable {
   @override
-  // ignore: todo
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }

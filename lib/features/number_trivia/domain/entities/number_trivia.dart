@@ -11,7 +11,5 @@ class NumberTrivia extends Equatable {
       : super();
 
   @override
-  // ignore: todo
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [text, number];
 }

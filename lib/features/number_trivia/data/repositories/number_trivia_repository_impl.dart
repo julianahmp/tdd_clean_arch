@@ -5,8 +5,11 @@ import 'package:resocoder_tdd_clean_arch/core/error/failures.dart';
 import 'package:resocoder_tdd_clean_arch/core/network/network_info.dart';
 import 'package:resocoder_tdd_clean_arch/features/number_trivia/data/datasources/number_trivia_local_datasource.dart';
 import 'package:resocoder_tdd_clean_arch/features/number_trivia/data/datasources/number_trivia_remote_datasource.dart';
+import 'package:resocoder_tdd_clean_arch/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:resocoder_tdd_clean_arch/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:resocoder_tdd_clean_arch/features/number_trivia/domain/repositories/number_trivia_repository.dart';
+
+typedef _ConcreteOrRandomChooser = Future<NumberTrivia> Function();
 
 class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   //O Repository do Data sempre vai implementar o Repository da Domain.
@@ -24,29 +27,39 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
     int number,
   ) async {
-    return await _getTrivia(() => getConcreteNumberTrivia(number));
+    return await _getTrivia(() {
+      return remoteDataSource.getConcreteNumberTrivia(number);
+    });
   }
 
   @override
   Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
-    return await _getTrivia(() => getRandomNumberTrivia());
+    return await _getTrivia(() {
+      return remoteDataSource.getRandomNumberTrivia();
+    });
   }
 
   //HighOrderFunction - uma função que eu posso chamar no paramêtro de um método para evitar duplicação de código.
   Future<Either<Failure, NumberTrivia>> _getTrivia(
-  /*Future<NumberTrivia> pq a função retorna isso mas...vou tentar não passar essa tipagem*/
-  Function() getConcreteOrRandom) async {
+      /*Future<NumberTrivia> pq a função retorna isso mas...vou tentar não passar essa tipagem*/
+      _ConcreteOrRandomChooser getConcreteOrRandom) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteRandomNumberTrivia = await getConcreteOrRandom();
-        localDataSource.getCacheNumberTrivia(remoteRandomNumberTrivia);
+        localDataSource.getCacheNumberTrivia(
+            remoteRandomNumberTrivia as NumberTriviaModel);
         //Chamo a função que vai armanezar o remoteNumberTrivia no Local Cache.
         return Right(remoteRandomNumberTrivia);
       } on ServerExceptions {
         return Left(ServerFailure());
       }
     } else {
-      return Right(await localDataSource.getLastNumberTrivia());
+      try {
+        final localTrivia = await localDataSource.getLastNumberTrivia();
+        return Right(localTrivia);
+      } on CacheExceptions {
+        return Left(CacheFailure());
+      }
     }
   }
 }

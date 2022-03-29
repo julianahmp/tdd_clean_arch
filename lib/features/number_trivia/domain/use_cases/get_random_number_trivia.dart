@@ -7,7 +7,7 @@ import 'package:resocoder_tdd_clean_arch/features/number_trivia/domain/repositor
 class GetRandomNumberTrivia implements UseCase<NumberTrivia, NoParams> {
   final NumberTriviaRepository repository;
 
-  GetRandomNumberTrivia(this.repository);
+  GetRandomNumberTrivia({required this.repository});
 
   @override
   Future<Either<Failure, NumberTrivia>> call(noParams) async {

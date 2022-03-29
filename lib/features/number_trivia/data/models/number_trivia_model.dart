@@ -7,7 +7,10 @@ class NumberTriviaModel extends NumberTrivia {
   //?Eu extendo a entity mas pq precisa do super construtor?
 
   factory NumberTriviaModel.fromJson(Map<String, dynamic> json) {
-    return NumberTriviaModel(text: json['text'], number: json['number']);
+    return NumberTriviaModel(
+      text: json['text'], 
+      number: (json['number'] as num).toInt(),
+      );
   }
   //?O que é factory? Pq nao pode ser feito com o JsonToDart?
 
