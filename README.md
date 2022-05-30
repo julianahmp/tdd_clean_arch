@@ -1,3 +1,3 @@
 ## Description
 
-ResoCoder tutorial for TDD and Clean Arch project.
+ResoCoder Flutter TDD Clean Arch course.
